@@ -7,14 +7,14 @@ This is a workshop where you can learn about integration testing and unit testin
 
 ## What you will need before you start
 
-- Knowledge of basic NodeJs
-- How to write on BDD
-- Visual Studio Code (if you want to use another IDE please ignore VS Code extensions steps)
-- Git (You can follow next [link](https://education.github.com/git-cheat-sheet-education.pdf) for Git cheat sheet)
-- NodeJs - [Install NodeJS if you don't have it yet](https://nodejs.org/en/download)
-  > You may install any version after NodeJs 14
-- Docker - [Install Docker if you don't have it yet](https://www.docker.com/)
-  > Docker will be used to simulate our systems and to be able to develop the project
+-   Knowledge of basic NodeJs
+-   How to write on BDD
+-   Visual Studio Code (if you want to use another IDE please ignore VS Code extensions steps)
+-   Git (You can follow next [link](https://education.github.com/git-cheat-sheet-education.pdf) for Git cheat sheet)
+-   NodeJs - [Install NodeJS if you don't have it yet](https://nodejs.org/en/download)
+    > You may install any version after NodeJs 14
+-   Docker - [Install Docker if you don't have it yet](https://www.docker.com/)
+    > Docker will be used to simulate our systems and to be able to develop the project
 
 ## Steps
 
@@ -35,9 +35,9 @@ This is a workshop where you can learn about integration testing and unit testin
 **Note:** If it's your first time working with Github repositories it's highly recommended to check this guide before starting. [Github Guides](https://guides.github.com/activities/hello-world/).
 
 1. Create your Github account (skip this step if you already have one)
-1. Create a new repository on Github called `**integration-unit-testing-workshop**` (you can also change the name if you want to, this name will be used on all commands from the workshop)
-1. Clone this repository on your local machine with `git clone git@github.com:salorrego/integration-unit-testing-workshop.git` (for SSH cloning) or `git clone https://github.com/salorrego/integration-unit-testing-workshop.git` (for HTTP cloning)
-1. Change the remote to your own
+2. Create a new repository on Github called `**integration-unit-testing-workshop**` (you can also change the name if you want to, this name will be used on all commands from the workshop)
+3. Clone this repository on your local machine with `git clone git@github.com:salorrego/integration-unit-testing-workshop.git` (for SSH cloning) or `git clone https://github.com/salorrego/integration-unit-testing-workshop.git` (for HTTP cloning)
+4. Change the remote to your own
 
 ```shell
 git remote rm origin
@@ -45,18 +45,18 @@ git remote add origin git@github.com:<your user goes here>/integration-unit-test
 git push -u origin main
 ```
 
-1. On Github repository settings under Branches option add a new rule to add protection to main branch so it requires always PR before merging
-1. On Colaborators manu add:
+5. On Github repository settings under Branches option add a new rule to add protection to main branch so it requires always PR before merging
+6. On Colaborators manu add:
 
-- [salorrego](https://github.com/salorrego)
+-   [salorrego](https://github.com/salorrego)
 
-1. Create a new branch **project-setup** on the repository
+7. Create a new branch **project-setup** on the repository
 
 ```bash
 git checkout -b project-setup
 ```
 
-1. Create the file `.editorconfig`
+8. Create the file `.editorconfig`
 
 ```.editorconfig
 root = true
@@ -74,7 +74,7 @@ indent_size = 4
 trim_trailing_whitespace = false
 ```
 
-1. Inside the file `.gitignore` add next content
+9. Inside the file `.gitignore` add next content
 
 ```.gitignore
 # Tests
@@ -83,15 +83,15 @@ trim_trailing_whitespace = false
 /test_reports
 ```
 
-1. Install Visual Studio Code extension `Editorconfig for VS Code` (May require to restart the IDE)
+10. Install Visual Studio Code extension `Editorconfig for VS Code` (May require to restart the IDE)
 
-1. Install next dev dependencies for testing:
+11. Install next dev dependencies for testing:
 
 ```bash
 npm i -D @types/jest docker-compose jest ts-jest jest-watch-master jest-watch-typeahead jest-watch-toggle-config jest-dashboard jest-html-reporters jest-junit
 ```
 
-1. Create `jest.config.js` on the root of the project
+12. Create `jest.config.js` on the root of the project
 
 ```jest.config.js
 module.exports = {
@@ -165,7 +165,7 @@ module.exports = {
 
 ```
 
-1. Add to your `package.json` file next commands under the scripts:
+13. Add to your `package.json` file next commands under the scripts:
 
 ```pakcage.json scripts
 "test": "jest",
@@ -174,9 +174,9 @@ module.exports = {
 "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
 ```
 
-1. Create the folder `2-integration` under `test` folder
+14. Create the folder `2-integration` under `test` folder
 
-1. Create your first test in `test/2-integration/books.test.ts` with next content
+15. Create your first test in `test/2-integration/books.test.ts` with next content
 
 ```books.test.ts
 import { HttpStatus } from '@nestjs/common';
@@ -247,9 +247,9 @@ describe('(Integration) Books', () => {
 });
 ```
 
-1. Create unter `test` folder a new folder called `support`
+16. Create unter `test` folder a new folder called `support`
 
-1. Inside the folder `test/support` create the file `gloabl-setup.ts`
+17. Inside the folder `test/support` create the file `gloabl-setup.ts`
 
 ```global-setup.ts
 // Set ENV variables
@@ -299,7 +299,7 @@ export default async function setup() {
 > This step is critical, because everytime you run your tests it will set up the required env vars (if you wish to know more about it you can check the `config` folder) and it will also start docker with our DB independent of the project (in case you want to work with it, the DB for testing will be on a different port), after starting the images it will run the migrations required for your project so your testing Db is up to date
 > In case you want to run seeding you can do it by adding the npm script that will execute it.
 
-1. Inside the folder `test/support` create the file `gloabl-teardown.ts`
+18. Inside the folder `test/support` create the file `gloabl-teardown.ts`
 
 ```global-teardown.ts
 import path from 'path';
@@ -347,7 +347,7 @@ export default async function tearDown() {
 
 > This step is critical, since it will truncate your tables so you can run your tests over and over again, also when it runs on CI it will run a revert of the migrations before stopping the containers
 
-1. Inside `test/support` create the folder `docker` and inside of it create the file `docker-compose.yml`
+19. Inside `test/support` create the folder `docker` and inside of it create the file `docker-compose.yml`
 
 ```docker-compose.yml
 version: '3.2'
@@ -370,7 +370,7 @@ services:
     stop_signal: SIGKILL
 ```
 
-1. Add to the file `test/test-helpers/db/db-helpers.ts` next content:
+20. Add to the file `test/test-helpers/db/db-helpers.ts` next content:
 
 ```db-helpers.ts
 /**
@@ -434,7 +434,7 @@ export async function waitForPostgres(
 
 > Each of this fns will be used for our global setup/teardown
 
-1. Update the file `test/test-helpers/index.ts` with next content
+21. Update the file `test/test-helpers/index.ts` with next content
 
 ```index.ts
 export {
@@ -448,7 +448,7 @@ export { getAxiosInstance } from './axios-instance';
 
 > This will allow us to import from test-helpers everything we need
 
-1. Under the foler `test/test-helpers` create the file `axios-instance.ts`
+22. Under the foler `test/test-helpers` create the file `axios-instance.ts`
 
 ```axios-instance.ts
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
@@ -480,7 +480,7 @@ export function getAxiosInstance(
 
 > This will create an axios instance for our tests with the base configuration
 
-1. Run your tests
+23. Run your tests
 
 ```bash
 npm run test
@@ -488,15 +488,15 @@ npm run test
 
 > You should get a success message from your console
 
-1. Create a LICENSE file on the root of the project using next [TEMPLATE](https://en.wikipedia.org/wiki/MIT_License) (_remember to update the year and copyright holders_)
+24. Create a LICENSE file on the root of the project using next [TEMPLATE](https://en.wikipedia.org/wiki/MIT_License) (_remember to update the year and copyright holders_)
 
-1. Create on the root of the project a folder called **.github** and inside create the file `CODEOWNERS` with next content:
+25. Create on the root of the project a folder called **.github** and inside create the file `CODEOWNERS` with next content:
 
 ```CODEOWNERS
 * @salorrego
 ```
 
-1. Make a commit with all changes and push your changes to the repository:
+26. Make a commit with all changes and push your changes to the repository:
 
 ```bash
 git add .
@@ -504,13 +504,13 @@ git commit -m "setup project configuration"
 git push origin project-setup
 ```
 
-1. Create a PR, assign to a reviewer, wait for comments or approval. (For more information on how to create a PR follow next [link](https://help.github.com/articles/creating-a-pull-request/))
+27. Create a PR, assign to a reviewer, wait for comments or approval. (For more information on how to create a PR follow next [link](https://help.github.com/articles/creating-a-pull-request/))
 
-   > **Note:** You should always have a reviewer, you can try finding a friend that knows how to do one and ask him to do it. Since this is a self-learning workshop if you don't have a reviewer you can review the results on the corresponding branch of the workshop repository and merge your PR
+    > **Note:** You should always have a reviewer, you can try finding a friend that knows how to do one and ask him to do it. Since this is a self-learning workshop if you don't have a reviewer you can review the results on the corresponding branch of the workshop repository and merge your PR
 
-1. Let's wrap up first step, we did:
+28. Let's wrap up first step, we did:
 
-- [x] Add basic configuration for jest to work and generate reports
-- [x] Added a docker-compose so our tests can simulate the whole system
-- [x] Add global setup/teardown so our project can run the tests simulating the system
-- [x] Added our firts test! 🥳
+-   [x] Add basic configuration for jest to work and generate reports
+-   [x] Added a docker-compose so our tests can simulate the whole system
+-   [x] Add global setup/teardown so our project can run the tests simulating the system
+-   [x] Added our firts test! 🥳
