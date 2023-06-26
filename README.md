@@ -21,6 +21,13 @@ This is a workshop where you can learn about integration testing and unit testin
 ## Content Table
 
 1. [Project Setup](#1-project-setup)
+2. [Adding Continuous Integration](#2-adding-continuous-integration)
+3. [Adding Jest reporters](#3-adding-jest-reporters)
+4. [Testing With BDD](#4-testing-with-bdd)
+5. [Intercepting API calls](#5-intercepting-api-calls)
+6. [Unit testing](#6-unit-testing)
+7. [Adding More Tests](#7-adding-more-tests)
+8. [Uploading Artifacts to Github Actions](#8-uploading-artifacts-to-github-actions)
 
 ### 1. Project Setup
 
@@ -52,7 +59,7 @@ git checkout -b project-setup
 
 1. Create the file `.editorconfig`
 
-```properties
+```.editorconfig
 root = true
 
 [*]
@@ -70,3 +77,106 @@ trim_trailing_whitespace = false
 ```
 
 1. Install Visual Studio Code extension `Editorconfig for VS Code` (May require to restart the IDE)
+
+1. Install next dev dependencies for testing:
+
+```bash
+npm i -D @types/jest docker-compose jest ts-jest jest-watch-master jest-watch-typeahead jest-watch-toggle-config
+```
+
+1. Create `jest.config.js` on the root of the project
+
+```jest.config.js
+module.exports = {
+  transform: {
+    '^.+\\.(t|j)s$': 'ts-jest',
+  },
+  testTimeout: 10000,
+  testMatch: [
+    '**/*.test.ts',
+    '!**/stryker-tmp/**',
+    '!**/test-helpers.js**',
+    '!**/*global-setup*',
+  ],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  testEnvironment: 'node',
+  verbose: true,
+  collectCoverage: false,
+  collectCoverageFrom: [
+    'src/**/*.ts',
+    '!src/**/main.ts',
+    '!**/node_modules/**',
+    '!**/src/libraries/**',
+    '!**/test/**',
+    '!**/*test*.ts',
+    '!**/*entity*.ts',
+    '!**/migration/*.ts',
+  ],
+  forceExit: true,
+  notify: true,
+  notifyMode: 'change',
+  watchPlugins: [
+    'jest-watch-typeahead/filename',
+    'jest-watch-typeahead/testname',
+    'jest-watch-master',
+    [
+      'jest-watch-toggle-config',
+      {
+        setting: 'verbose',
+      },
+    ],
+    [
+      'jest-watch-toggle-config',
+      {
+        setting: 'collectCoverage',
+      },
+    ],
+  ],
+};
+```
+
+1. Add to your `package.json` file next commands under the scripts:
+
+```pakcage.json scripts
+"test": "jest",
+"test:watch": "npm run test -- --watch"
+```
+
+1. Create the folder `2-integration` under `test` folder
+
+1. Create your first test in `test/2-integration/books.test.ts` with next content
+
+```books.test.ts
+describe('(Integration) Books', () => {
+  test('first test', () => {
+    expect(true).toBeTtruthy()
+  });
+});
+```
+
+1. Run your tests
+
+```bash
+npm run test
+```
+
+> You should get a success message from your console
+
+1. Create a LICENCE file on the root of the project using next [TEMPLATE](https://en.wikipedia.org/wiki/MIT_License) (_remember to update the year and copyright holders_)
+
+1. Create on the root of the project a folder called **.github** and inside create the file `CODEOWNERS` with next content:
+
+```CODEOWNERS
+* @salorrego
+```
+
+1. Make a commit with all changes and push your changes to the repository:
+
+```bash
+git add .
+git commit -m "setup project configuration"
+git push origin project-setup
+```
+
+1. Create a PR, assign to a reviewer, wait for comments or approval. (For more information on how to create a PR follow next [link](https://help.github.com/articles/creating-a-pull-request/))
+    > **Note:** You should always have a reviewer, you can try finding a friend that knows how to do one and ask him to do it. Since this is a self-learning workshop if you don't have a reviewer you can review the results on the corresponding branch of the workshop repository and merge your PR
