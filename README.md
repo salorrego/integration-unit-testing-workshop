@@ -517,7 +517,7 @@ git push origin project-setup
 
 ### 2. Adding Continuous Integration
 
-**NOTE:** In this case we will be using [Github Actions](https://github.com/features/actions), but you can use and CI of your preference
+**NOTE:** In this case we will be using [Github Actions](https://github.com/features/actions) for this workshop, if you want to use any other CI you may require different steps.
 
 1. Create a new branch **adding-ci** on the repository
 
@@ -570,3 +570,107 @@ jobs:
 
 -   [x] Add CI configuration with Github Actions
 -   [x] Protect our repository so every time anyone wants to merge changes on a PR, it has to first pass the tests 🥳
+
+### 3. Testing With BDD
+
+1. Create a new branch **bdd-testing** on the repository
+
+```bash
+git checkout -b bdd-testing
+```
+
+2. Let's redo `books.test.ts` so it's more easy to read
+
+```books.test.ts
+import { HttpStatus } from '@nestjs/common';
+
+import { closeServer, startServer } from '../../src/server';
+import { getAxiosInstance } from '../test-helpers';
+import { saveBook } from '../test-helpers';
+
+const books = [
+  {
+    name: "Harry Potter Philosopher's Stone",
+    author: 'J. K. Rowling',
+    genre: 'Fantasy',
+    quantity: 3,
+    totalAvailable: 1,
+  },
+  {
+    name: 'Harry Potter Chamber of Secrets',
+    author: 'J. K. Rowling',
+    genre: 'Fantasy',
+    quantity: 1,
+    totalAvailable: 1,
+  },
+  {
+    name: 'Absalom, Absalom',
+    author: 'WILLIAM FAULKNER',
+    genre: 'Fiction',
+    quantity: 5,
+    totalAvailable: 5,
+  },
+];
+
+async function saveAllBooks() {
+  console.log('About to start book seeding');
+  for (const book of books) {
+    await saveBook(book);
+    console.log(`adding book: ${book.name}`);
+  }
+  console.log('books seeding done');
+}
+
+const axios = getAxiosInstance();
+
+describe('(Integration) Books', () => {
+  beforeAll(async () => {
+    await startServer();
+
+    // Add books to the DB
+    await saveAllBooks();
+  });
+
+  afterAll(async () => {
+    // 🔚 Close server
+    await closeServer();
+  });
+
+  describe('/api/v1/books', () => {
+    describe('GET', () => {
+      describe('when the user gets all books', () => {
+        test('then the service should return all books', async () => {
+          //Act
+          const booksResponse = await axios.get('api/v1/books');
+
+          //Assert
+          expect(booksResponse).toMatchObject({
+            status: HttpStatus.OK,
+            data: expect.arrayContaining([
+              expect.objectContaining({ id: expect.any(Number), ...books[0] }),
+              expect.objectContaining({ id: expect.any(Number), ...books[1] }),
+              expect.objectContaining({ id: expect.any(Number), ...books[2] }),
+            ]),
+          });
+        });
+      });
+    });
+  });
+});
+```
+
+> This is just a proposed format, on our current terminal it's easier to read the output of jest, and since tests should be the documentation of the project, this is a great way of creating them
+> You can find more information about BDD in the next [link](https://en.wikipedia.org/wiki/Behavior-driven_development)
+> This proposed way of separating tests consist in:
+>
+> > The path for your API (if you have just the partial API for 2 API's on the tests you can just add the rest of the path inside of a new describe inside the partial path)
+> >
+> > > Then the method for your API
+> > >
+> > > > Then the description of what is it doing (`BDD When`)
+> > > >
+> > > > > Then the description of the assertion (`BDD Then`)
+
+3. Let's wrap up step #3. We did:
+
+-   [x] We updated the tests to have BDD, now our tests will be easier to read, awesome!
