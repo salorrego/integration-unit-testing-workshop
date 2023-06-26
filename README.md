@@ -514,3 +514,59 @@ git push origin project-setup
 -   [x] Added a docker-compose so our tests can simulate the whole system
 -   [x] Add global setup/teardown so our project can run the tests simulating the system
 -   [x] Added our firts test! 🥳
+
+### 2. Adding Continuous Integration
+
+**NOTE:** In this case we will be using [Github Actions](https://github.com/features/actions), but you can use and CI of your preference
+
+1. Create a new branch **adding-ci** on the repository
+
+```bash
+git checkout -b adding-ci
+```
+
+2. Inside the folder `.github` create a folder called `workflows` and inside of it create the file `test.yml`
+
+```test.yml
+name: 🚧 Test
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14.x
+      - run: npm ci
+      - run: npm run build
+      - run: npm test:cov
+```
+
+> What this will do is every time you push your changes to Github or create a PR to the main breanch it will run the build of the project and the tests
+
+3. Commit your changes, push and create a PR
+
+4. In Branch protection settings update your rules to include `Require status checks to pass before merging` and inside that list search for `test`
+
+    > **NOTE:** you may need to push the changes and create a PR before you can see the `test`
+
+5. Assign the PR to a reviewer, wait for comments or approval.
+
+6. Let's wrap up step #2. We did:
+
+-   [x] Add CI configuration with Github Actions
+-   [x] Protect our repository so every time anyone wants to merge changes on a PR, it has to first pass the tests 🥳
