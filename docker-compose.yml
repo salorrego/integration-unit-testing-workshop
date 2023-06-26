@@ -1,0 +1,43 @@
+version: '3.4'
+services:
+  nestjs-practice-server:
+    build:
+      target: deps
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NPMRC=${NPMRC}
+    container_name: nestjs-practice
+    environment:
+      - LOG_PRETTY_PRINT=true
+      - TYPEORM_HOST=nestjs-practice-postgres-service
+    ports:
+      - '3000:3000'
+      - '9230:9229'
+    volumes:
+      - ./:/app
+    stop_signal: SIGKILL
+    privileged: true
+    stdin_open: true
+    tty: true
+    entrypoint: ['npm', 'run', 'start:dev']
+    restart: 'always'
+
+  nestjs-practice-postgres-service:
+    image: 'postgres:13-alpine'
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -h localhost -p 5432 -U admin -d nestjs-practice-db',
+        ]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=nestjs-practice-db
+    stop_signal: SIGKILL

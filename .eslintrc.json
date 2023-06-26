@@ -1,0 +1,41 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "tsconfig.json",
+    "sourceType": "module"
+  },
+  "plugins": ["@typescript-eslint/eslint-plugin", "jest"],
+  "extends": [
+    "plugin:security/recommended",
+    "plugin:promise/recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:import/typescript",
+    "prettier",
+    "prettier/@typescript-eslint"
+  ],
+  "root": true,
+  "env": {
+    "node": true,
+    "jest": true
+  },
+  "rules": {
+    "@typescript-eslint/interface-name-prefix": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "jest/no-disabled-tests": "error",
+    "jest/no-focused-tests": "error",
+    "jest/no-identical-title": "error",
+    "jest/prefer-to-have-length": "warn",
+    "jest/valid-title": "error",
+    "jest/valid-expect": "error",
+    "jest/no-if": "error",
+    "jest/require-top-level-describe": "error",
+    "jest/no-test-prefixes": "error",
+    "jest/prefer-todo": "warn",
+    "jest/expect-expect": "error",
+    "jest/no-deprecated-functions": "error"
+  }
+}
