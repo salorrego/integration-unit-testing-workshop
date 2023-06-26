@@ -52,15 +52,24 @@ describe('(Integration) Books', () => {
     await closeServer();
   });
 
-  test('api returns all books', async () => {
-    const booksResponse = await axios.get('api/v1/books');
-    expect(booksResponse).toMatchObject({
-      status: HttpStatus.OK,
-      data: expect.arrayContaining([
-        expect.objectContaining({ id: expect.any(Number), ...books[0] }),
-        expect.objectContaining({ id: expect.any(Number), ...books[1] }),
-        expect.objectContaining({ id: expect.any(Number), ...books[2] }),
-      ]),
+  describe('/api/v1/books', () => {
+    describe('GET', () => {
+      describe('when the user gets all books', () => {
+        test('then the service should return all books', async () => {
+          //Act
+          const booksResponse = await axios.get('api/v1/books');
+
+          //Assert
+          expect(booksResponse).toMatchObject({
+            status: HttpStatus.OK,
+            data: expect.arrayContaining([
+              expect.objectContaining({ id: expect.any(Number), ...books[0] }),
+              expect.objectContaining({ id: expect.any(Number), ...books[1] }),
+              expect.objectContaining({ id: expect.any(Number), ...books[2] }),
+            ]),
+          });
+        });
+      });
     });
   });
 });
