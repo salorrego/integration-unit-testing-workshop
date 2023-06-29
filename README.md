@@ -1,5 +1,3 @@
-# Workshop is currently in development
-
 # Integration and Unit Testing Workshop
 
 Welcome!
@@ -7,14 +5,14 @@ This is a workshop where you can learn about integration testing and unit testin
 
 ## What you will need before you start
 
--   Knowledge of basic NodeJs
--   How to write on BDD
--   Visual Studio Code (if you want to use another IDE please ignore VS Code extensions steps)
--   Git (You can follow next [link](https://education.github.com/git-cheat-sheet-education.pdf) for Git cheat sheet)
--   NodeJs - [Install NodeJS if you don't have it yet](https://nodejs.org/en/download)
-    > You may install any version after NodeJs 14
--   Docker - [Install Docker if you don't have it yet](https://www.docker.com/)
-    > Docker will be used to simulate our systems and to be able to develop the project
+- Knowledge of basic NodeJs
+- How to write on BDD
+- Visual Studio Code (if you want to use another IDE please ignore VS Code extensions steps)
+- Git (You can follow next [link](https://education.github.com/git-cheat-sheet-education.pdf) for Git cheat sheet)
+- NodeJs - [Install NodeJS if you don't have it yet](https://nodejs.org/en/download)
+  > You may install any version after NodeJs 14
+- Docker - [Install Docker if you don't have it yet](https://www.docker.com/)
+  > Docker will be used to simulate our systems and to be able to develop the project
 
 ## Steps
 
@@ -24,7 +22,7 @@ This is a workshop where you can learn about integration testing and unit testin
 2. [Adding Continuous Integration](#2-adding-continuous-integration)
 3. [Testing With BDD](#3-testing-with-bdd)
 4. [Intercepting API calls](#4-intercepting-api-calls)
-5. [Unit testing](#5-unit-testing)
+5. [Unit Testing](#5-unit-testing)
 6. [Adding More Tests](#6-adding-more-tests)
 7. [Uploading Artifacts to Github Actions](#7-uploading-artifacts-to-github-actions)
 
@@ -48,7 +46,7 @@ git push -u origin main
 5. On Github repository settings under Branches option add a new rule to add protection to main branch so it requires always PR before merging
 6. On Colaborators manu add:
 
--   [salorrego](https://github.com/salorrego)
+- [salorrego](https://github.com/salorrego)
 
 7. Create a new branch **project-setup** on the repository
 
@@ -510,10 +508,10 @@ git push origin project-setup
 
 28. Let's wrap up first step, we did:
 
--   [x] Add basic configuration for jest to work and generate reports
--   [x] Added a docker-compose so our tests can simulate the whole system
--   [x] Add global setup/teardown so our project can run the tests simulating the system
--   [x] Added our firts test! 🥳
+- [x] Add basic configuration for jest to work and generate reports
+- [x] Added a docker-compose so our tests can simulate the whole system
+- [x] Add global setup/teardown so our project can run the tests simulating the system
+- [x] Added our firts test! 🥳
 
 ### 2. Adding Continuous Integration
 
@@ -562,14 +560,16 @@ jobs:
 
 4. In Branch protection settings update your rules to include `Require status checks to pass before merging` and inside that list search for `test`
 
-    > **NOTE:** you may need to push the changes and create a PR before you can see the `test`
+   > **NOTE:** you may need to push the changes and create a PR before you can see the `test`
 
 5. Assign the PR to a reviewer, wait for comments or approval.
 
 6. Let's wrap up step #2. We did:
 
--   [x] Add CI configuration with Github Actions
--   [x] Protect our repository so every time anyone wants to merge changes on a PR, it has to first pass the tests 🥳
+- [x] Add CI configuration with Github Actions
+- [x] Protect our repository so every time anyone wants to merge changes on a PR, it has to first pass the tests 🥳
+
+7. Create a PR, assign to a reviewer, wait for comments or approval.
 
 ### 3. Testing With BDD
 
@@ -673,7 +673,9 @@ describe('(Integration) Books', () => {
 
 3. Let's wrap up step #3. We did:
 
--   [x] We updated the tests to have BDD, now our tests will be easier to read, awesome!
+- [x] We updated the tests to have BDD, now our tests will be easier to read, awesome!
+
+4. Create a PR, assign to a reviewer, wait for comments or approval.
 
 ### 4. Intercepting API calls
 
@@ -808,6 +810,130 @@ describe('(Integration) Books', () => {
 });
 ```
 
-5. Let's wrap up step #3. We did:
+5. Let's wrap up step #4. We did:
 
--   [x] We just intercepted our first API call to a third party, awesome!
+- [x] We just intercepted our first API call to a third party, awesome!
+
+6. Create a PR, assign to a reviewer, wait for comments or approval.
+
+### 5. Unit Testing
+
+**Description**: Unit testing should be used when you have a comple logic, so you can deeply test the functionality you need, in the case of the rest of the API's provided for this workshop by using integration tests (integration betweet the Db and the BE) you can almost cover up all the functionalities the project has.
+
+1. Create a new branch **unit-testing** on the repository
+
+```bash
+git checkout -b unit-testing
+```
+
+2. Install the dev dependency `sinon`
+
+```bash
+npm i -D sinon wait-for-expect
+```
+
+3. Let's create inside the folder `test` the folder `1-unit`
+
+```bash
+mkdir test/1-unit
+```
+
+4. Inside the folder `1-unit` let's create a file called `books.service.test.ts`
+
+```books.service.test.ts
+import { Connection, EntityManager, Repository } from 'typeorm';
+import { spy, restore, SinonSpy } from 'sinon';
+import waitForExpect from 'wait-for-expect';
+
+import { BooksService } from '../../src/domain/service/books.service';
+import { BooksRepository } from '../../src/data-access/books/books.repository';
+import { BookModel } from '../../src/data-access/books/book.model';
+import { connectionOptions } from '../../src/data-access/connection-options';
+import { Logger } from '../../src/utils/logger';
+
+describe('(Unit) Books Service', () => {
+  let booksService: BooksService;
+  let loggerInfoSpy: SinonSpy;
+
+  beforeAll(() => {
+    loggerInfoSpy = spy(Logger, 'info');
+
+    const con = new Connection(connectionOptions);
+    const repository = new Repository(BookModel, new EntityManager(con));
+    const booksRepository = new BooksRepository(repository);
+    booksService = new BooksService(booksRepository);
+  });
+
+  afterAll(() => {
+    restore();
+  });
+
+  describe('given the user is in the app', () => {
+    describe('when the user runs api for process in the background', () => {
+      test('then the service should run the process in the background', (done) => {
+        //Arrange
+        const book = {
+          name: 'Node.js Design Patterns',
+          author: 'Mario Casciaro',
+          genre: 'Education',
+          quantity: 15,
+          totalAvailable: 15,
+        };
+
+        //Act
+        booksService.processInBg(book);
+
+        //Assert
+        waitForExpect(
+          () => {
+            expect(loggerInfoSpy.args).toMatchObject(
+              expect.arrayContaining([
+                [`BooksService: Process in BG ${book.name}`],
+              ]),
+            );
+            done();
+          },
+          5000,
+          1000,
+        );
+      });
+    });
+  });
+});
+```
+
+> Now our "complex logic" api is working and we can test things that happen in the background! 🥳
+
+5. Let's wrap up step #5. We did:
+
+- [x] We just our first unit test with spy from sinon and waitForExpect, awesome!
+- [x] We learned that Unit tests are for complex logic.
+
+6. Create a PR, assign to a reviewer, wait for comments or approval.
+
+### 6. Adding More Tests
+
+1. Now it's time to practice, try to add missing API tests, remember to use BDD on all of your tests since those will become your documentation.
+
+2. Create a PR, assign to a reviewer, wait for comments or approval.
+
+### 7. Uploading Artifacts to Github Actions
+
+1. It's time now to add our test results to our CI, for that you will need to add next lines to your github workflow
+
+```test.yml
+- uses: actions/upload-artifact@v3
+  with:
+    name: Test Results
+    path: |
+      coverage/
+      test_reports/
+```
+
+> **NOTES:** This must go as the last step of your actions
+>
+> > What this will do is upload your test results to Github action, with thar you will be able to download the results (on Circleci you may be able to see them after the run without downloading it)
+
+2. Try downloading the results, it's a zip file, and under the folder `coverage/html-report` you will find a file called `report.html`, try opening it on a browser, see what happens
+
+3. Create a PR, assign to a reviewer, wait for comments or approval.
