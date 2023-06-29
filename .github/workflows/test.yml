@@ -24,3 +24,10 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm test:cov
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Test Results
+          path: |
+            coverage/
+            test_reports/
