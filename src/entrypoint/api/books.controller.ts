@@ -56,6 +56,20 @@ export class BooksController {
     return this.booksService.createBook(body);
   }
 
+  @Post('/process-in-bg')
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Run a process in background',
+    type: BookModel,
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Bad Request',
+  })
+  async processInBg(@Body() body: CreateBookRequest): Promise<void> {
+    return this.booksService.processInBg(body);
+  }
+
   @Post(':bookId/reserve')
   @ApiResponse({
     status: HttpStatus.CREATED,

@@ -83,6 +83,14 @@ export class BooksService {
       );
     }
   }
+  
+  async processInBg(book: CreateBookRequest): Promise<void> {
+    setTimeout(() => {
+      // "Complex logic"
+      Logger.info(`BooksService: Process in BG ${book.name}`);
+    }, 3000);
+    return;
+  }
 
   async reserveBook(bookId: number): Promise<BookModel> {
     let book: BookModel;

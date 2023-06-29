@@ -674,3 +674,140 @@ describe('(Integration) Books', () => {
 3. Let's wrap up step #3. We did:
 
 -   [x] We updated the tests to have BDD, now our tests will be easier to read, awesome!
+
+### 4. Intercepting API calls
+
+1. Create a new branch **api-intercept** on the repository
+
+```bash
+git checkout -b api-intercept
+```
+
+2. Let's install `nock` as a dev dependency so we can intercept API calls during our tests, for more information you can check the lib docs [here](https://www.npmjs.com/package/nock)
+
+```bash
+npm i -D nock
+```
+
+3. Now let's use nock to intercept an API call to a thrid party like this:
+
+```nock
+nock(`${url}`)
+  .get('/word')
+  .reply(200, 'Mocked Upcoming')
+  .persist()
+
+// Inside the after all remember to add the clearAll
+nock.cleanAll()
+```
+
+> **NOTE:** `.persist()` is not needed in this case, just remember that if you have more than one test using the nock, this will keep the interceptor working
+
+4. Yor testing file should now look like this:
+
+```books.test.ts
+import { HttpStatus } from '@nestjs/common';
+import nock from 'nock';
+
+import { closeServer, startServer } from '../../src/server';
+import { getAxiosInstance } from '../test-helpers';
+import { saveBook } from '../test-helpers';
+import { get } from '../../config/convict';
+
+const books = [
+  {
+    name: "Harry Potter Philosopher's Stone",
+    author: 'J. K. Rowling',
+    genre: 'Fantasy',
+    quantity: 3,
+    totalAvailable: 1,
+  },
+  {
+    name: 'Harry Potter Chamber of Secrets',
+    author: 'J. K. Rowling',
+    genre: 'Fantasy',
+    quantity: 1,
+    totalAvailable: 1,
+  },
+  {
+    name: 'Absalom, Absalom',
+    author: 'WILLIAM FAULKNER',
+    genre: 'Fiction',
+    quantity: 5,
+    totalAvailable: 5,
+  },
+];
+
+async function saveAllBooks() {
+  console.log('About to start book seeding');
+  for (const book of books) {
+    await saveBook(book);
+    console.log(`adding book: ${book.name}`);
+  }
+  console.log('books seeding done');
+}
+
+const axios = getAxiosInstance();
+
+describe('(Integration) Books', () => {
+  beforeAll(async () => {
+    nock(`${get('thirdParty.url')}`)
+      .get('word')
+      .reply(200, 'Mocked Upcoming');
+
+    await startServer();
+
+    // Add books to the DB
+    await saveAllBooks();
+  });
+
+  afterAll(async () => {
+    // 🔚 Close server
+    await closeServer();
+
+    nock.cleanAll();
+  });
+
+  describe('/api/v1/books', () => {
+    describe('GET', () => {
+      describe('when the user gets all books', () => {
+        test('then the service should return all books', async () => {
+          //Act
+          const booksResponse = await axios.get('api/v1/books');
+
+          //Assert
+          expect(booksResponse).toMatchObject({
+            status: HttpStatus.OK,
+            data: expect.arrayContaining([
+              expect.objectContaining({ id: expect.any(Number), ...books[0] }),
+              expect.objectContaining({ id: expect.any(Number), ...books[1] }),
+              expect.objectContaining({ id: expect.any(Number), ...books[2] }),
+            ]),
+          });
+        });
+      });
+    });
+
+    describe('upcoming', () => {
+      describe('GET', () => {
+        describe('when the user gets upcoming book', () => {
+          test('then the service should return upcoming book', async () => {
+            //Act
+            const booksResponse = await axios.get('api/v1/books/upcoming');
+
+            //Assert
+            expect(booksResponse).toMatchObject({
+              status: HttpStatus.OK,
+              data: 'Mocked Upcoming',
+            });
+          });
+        });
+      });
+    });
+  });
+});
+```
+
+5. Let's wrap up step #3. We did:
+
+-   [x] We just intercepted our first API call to a third party, awesome!
