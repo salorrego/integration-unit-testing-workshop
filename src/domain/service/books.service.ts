@@ -40,19 +40,19 @@ export class BooksService {
     return books;
   }
 
-  async getUpcoingBook(): Promise<string>{
-    const upcomingBookResponse = await axios.get(`${get('thirdParty.url')}/word`, {
-      validateStatus: () => true
-    })
+  async getUpcoingBook(): Promise<string> {
+    const upcomingBookResponse = await axios.get(
+      `${get('thirdParty.url')}/word`,
+      {
+        validateStatus: () => true,
+      },
+    );
 
-    if(upcomingBookResponse.status < HttpStatus.BAD_REQUEST){
-      return upcomingBookResponse.data[0]
+    if (upcomingBookResponse.status < HttpStatus.BAD_REQUEST) {
+      return upcomingBookResponse.data[0];
     }
 
-    throw new HttpException(
-      'No upcoming books',
-      HttpStatus.NOT_FOUND,
-    );
+    throw new HttpException('No upcoming books', HttpStatus.NOT_FOUND);
   }
 
   async createBook(book: CreateBookRequest): Promise<BookModel> {
