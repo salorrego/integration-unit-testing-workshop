@@ -1,8 +1,10 @@
 import { HttpStatus } from '@nestjs/common';
+import nock from 'nock';
 
 import { closeServer, startServer } from '../../src/server';
 import { getAxiosInstance } from '../test-helpers';
 import { saveBook } from '../test-helpers';
+import { get } from '../../config/convict';
 
 const books = [
   {
@@ -41,6 +43,10 @@ const axios = getAxiosInstance();
 
 describe('(Integration) Books', () => {
   beforeAll(async () => {
+    nock(`${get('thirdParty.url')}`)
+      .get('word')
+      .reply(200, 'Mocked Upcoming');
+
     await startServer();
 
     // Add books to the DB
@@ -50,6 +56,8 @@ describe('(Integration) Books', () => {
   afterAll(async () => {
     // 🔚 Close server
     await closeServer();
+
+    nock.cleanAll();
   });
 
   describe('/api/v1/books', () => {
@@ -67,6 +75,23 @@ describe('(Integration) Books', () => {
               expect.objectContaining({ id: expect.any(Number), ...books[1] }),
               expect.objectContaining({ id: expect.any(Number), ...books[2] }),
             ]),
+          });
+        });
+      });
+    });
+
+    describe('upcoming', () => {
+      describe('GET', () => {
+        describe('when the user gets upcoming book', () => {
+          test('then the service should return upcoming book', async () => {
+            //Act
+            const booksResponse = await axios.get('api/v1/books/upcoming');
+
+            //Assert
+            expect(booksResponse).toMatchObject({
+              status: HttpStatus.OK,
+              data: 'Mocked Upcoming',
+            });
           });
         });
       });
