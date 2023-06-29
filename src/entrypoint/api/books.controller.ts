@@ -32,6 +32,16 @@ export class BooksController {
     return this.booksService.getAllBooks(name);
   }
 
+  @Get('/upcoming')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Get upcoming book (random word)',
+    type: String,
+  })
+  async getUpcomingBook(): Promise<string> {
+    return this.booksService.getUpcoingBook();
+  }
+
   @Post()
   @ApiResponse({
     status: HttpStatus.CREATED,

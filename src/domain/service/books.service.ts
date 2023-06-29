@@ -3,6 +3,7 @@ import { BookModel } from '../../data-access/books/book.model';
 import { BooksRepository } from '../../data-access/books/books.repository';
 import { Logger } from '../../utils/logger';
 import { CreateBookRequest } from '../entities/create-book-request';
+import axios from 'axios';
 
 @Injectable()
 export class BooksService {
@@ -36,6 +37,21 @@ export class BooksService {
     }
 
     return books;
+  }
+
+  async getUpcoingBook(): Promise<string>{
+    const upcomingBookResponse = await axios.get('https://random-word-api.herokuapp.com/word', {
+      validateStatus: () => true
+    })
+
+    if(upcomingBookResponse.status < HttpStatus.BAD_REQUEST){
+      return upcomingBookResponse.data[0]
+    }
+
+    throw new HttpException(
+      'No upcoming books',
+      HttpStatus.NOT_FOUND,
+    );
   }
 
   async createBook(book: CreateBookRequest): Promise<BookModel> {
