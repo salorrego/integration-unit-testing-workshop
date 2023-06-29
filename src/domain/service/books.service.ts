@@ -1,9 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import axios from 'axios';
 import { BookModel } from '../../data-access/books/book.model';
 import { BooksRepository } from '../../data-access/books/books.repository';
 import { Logger } from '../../utils/logger';
 import { CreateBookRequest } from '../entities/create-book-request';
-import axios from 'axios';
+import { get } from '../../../config/convict';
 
 @Injectable()
 export class BooksService {
@@ -40,7 +41,7 @@ export class BooksService {
   }
 
   async getUpcoingBook(): Promise<string>{
-    const upcomingBookResponse = await axios.get('https://random-word-api.herokuapp.com/word', {
+    const upcomingBookResponse = await axios.get(`${get('thirdParty.url')}/word`, {
       validateStatus: () => true
     })
 

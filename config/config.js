@@ -101,5 +101,13 @@ module.exports = {
       default: 'src/data-access/migration',
       env: 'TYPEORM_MIGRATIONS_DIR',
     },
+  },
+  thirdParty: {
+    url: {
+      doc: 'Third party url for upcoming api',
+      format: String,
+      default: 'https://random-word-api.herokuapp.com',
+      env: 'TP_URL',
+    },
   }
 };
