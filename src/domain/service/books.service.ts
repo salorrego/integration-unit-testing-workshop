@@ -83,7 +83,7 @@ export class BooksService {
       );
     }
   }
-  
+
   async processInBg(book: CreateBookRequest): Promise<void> {
     setTimeout(() => {
       // "Complex logic"
