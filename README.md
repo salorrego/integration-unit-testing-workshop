@@ -553,7 +553,7 @@ jobs:
           node-version: 14.x
       - run: npm ci
       - run: npm run build
-      - run: npm test:cov
+      - run: npm run test:cov
 ```
 
 > What this will do is every time you push your changes to Github or create a PR to the main breanch it will run the build of the project and the tests
