@@ -9,7 +9,7 @@ on:
       - main
   workflow_dispatch:
     branches:
-      - '*'
+      - main
 
 jobs:
   test:
@@ -23,7 +23,7 @@ jobs:
           node-version: 14.x
       - run: npm ci
       - run: npm run build
-      - run: npm test:cov
+      - run: npm run test:cov
 
       - uses: actions/upload-artifact@v3
         with:
