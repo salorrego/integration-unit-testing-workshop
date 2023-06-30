@@ -3,6 +3,8 @@
 Welcome!
 This is a workshop where you can learn about integration testing and unit testing on BE using NestJs and PostgreSQL using a lot of practices.
 
+**NOTE:** The full result is in branch `full-project` in case you want to check it out
+
 ## What you will need before you start
 
 - Knowledge of basic NodeJs
