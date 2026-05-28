@@ -247,7 +247,7 @@ describe('(Integration) Books', () => {
 
 16. Create unter `test` folder a new folder called `support`
 
-17. Inside the folder `test/support` create the file `gloabl-setup.ts`
+17. Inside the folder `test/support` create the file `global-setup.ts`
 
 ```global-setup.ts
 // Set ENV variables
@@ -297,7 +297,7 @@ export default async function setup() {
 > This step is critical, because everytime you run your tests it will set up the required env vars (if you wish to know more about it you can check the `config` folder) and it will also start docker with our DB independent of the project (in case you want to work with it, the DB for testing will be on a different port), after starting the images it will run the migrations required for your project so your testing Db is up to date
 > In case you want to run seeding you can do it by adding the npm script that will execute it.
 
-18. Inside the folder `test/support` create the file `gloabl-teardown.ts`
+18. Inside the folder `test/support` create the file `global-teardown.ts`
 
 ```global-teardown.ts
 import path from 'path';
